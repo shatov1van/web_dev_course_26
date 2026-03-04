@@ -21,17 +21,17 @@ class WeatherStation
   
   # TODO: Implement attach method to add an observer
   def attach(observer)
-    @observers << observer
+    @observers << observer unless @observers.include?(observer)
   end
   
   # TODO: Implement detach method to remove an observer
   def detach(observer)
-    @observers.delete(observer) unless @observers.include?(observer)
+    @observers.delete(observer) if @observers.include?(observer)
   end
   
   # TODO: Implement notify method to call update on all observers
   def notify
-    @observers.each {|observer| observer.update}
+    @observers.each {|observer| observer.update(self)}
   end
   
   def set_measurements(temperature, humidity, pressure)
@@ -48,14 +48,25 @@ class CurrentConditionsDisplay
   # TODO: Implement update method
   # Return "Current conditions: #{temperature}°C, #{humidity}% humidity"
   
+  def initialize(weather_station = nil)
+    if weather_station
+      @weather_station = weather_station
+      @weather_station.attach(self)
+    end
+  end
+
   def update(weather_station)
     "Current conditions: #{weather_station.temperature}°C, #{weather_station.humidity}% humidity"
   end
 end
 
 class StatisticsDisplay
-  def initialize
+  def initialize(weather_station = nil)
     @temperatures = []
+    if weather_station
+      @weather_station = weather_station
+      @weather_station.attach(self)
+    end
   end
   
   # TODO: Implement update method
@@ -64,11 +75,8 @@ class StatisticsDisplay
   
   def update(weather_station)
     @temperatures << weather_station.temperature
-    sum = 0
-    @temperatures.each do |x|
-      sum += x.temperature
-    end
-    sum / @temperatures.count
+    return "Avg temperature: 0°C" if @temperatures.empty?
+    "Avg temperature: #{@temperatures.sum.to_f / @temperatures.count}°C"
   end
 end
 
@@ -87,24 +95,24 @@ class Stock
   
   # TODO: Implement subscribe method to add observer
   def subscribe(observer)
-    nil
+    @observers << observer unless @observers.include?(observer)
   end
   
   # TODO: Implement unsubscribe method to remove observer
   def unsubscribe(observer)
-    nil
+    @observers.delete(observer) if @observers.include?(observer)
   end
   
   def update_price(new_price)
     old_price = @price
     @price = new_price
     # TODO: Notify all observers with old_price and new_price
-    nil
+    notify_observers(old_price, @price)
   end
   
   # TODO: Implement notify_observers method
   def notify_observers(old_price, new_price)
-    nil
+    @observers.each { |observer| observer.on_price_change(self, old_price, new_price) }
   end
 end
 
@@ -121,7 +129,8 @@ class Investor
   # Return the notification string
   
   def on_price_change(stock, old_price, new_price)
-    nil
+    @notifications << "#{stock.symbol}: #{old_price} -> #{new_price}"
+    "#{stock.symbol}: #{old_price} -> #{new_price}"
   end
 end
 
@@ -134,20 +143,17 @@ module Observable
   
   def add_observer(observer)
     @observers ||= []
-    # TODO: Add observer to array if not already present
-    nil
+    @observers << observer unless @observers.include?(observer)
   end
   
   def delete_observer(observer)
     @observers ||= []
-    # TODO: Remove observer from array
-    nil
+    @observers.delete(observer) if @observers.include?(observer)
   end
   
   def notify_observers(data = nil)
     @observers ||= []
-    # TODO: Call update method on each observer with self and data
-    nil
+    @observers.each {|observer| observer.update(self, data)}
   end
 end
 
@@ -158,8 +164,7 @@ class NewsAgency
   
   def publish_news(news)
     @latest_news = news
-    # TODO: Notify all observers with the news
-    nil
+    notify_observers(news)
   end
 end
 
@@ -176,7 +181,7 @@ class NewsSubscriber
   # news_agency is the first parameter, news is the second
   
   def update(news_agency, news)
-    nil
+    @received_news << news unless @received_news.include?(news)
   end
 end
 

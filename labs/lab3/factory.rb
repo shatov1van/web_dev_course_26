@@ -24,25 +24,19 @@ end
 
 class Car < Vehicle
   def initialize
-    # TODO: Call super with appropriate values
-    # Car: 4 wheels, 5 passengers
-    nil
+    super("Car", 4, 5)
   end
 end
 
 class Motorcycle < Vehicle
   def initialize
-    # TODO: Call super with appropriate values
-    # Motorcycle: 2 wheels, 2 passengers
-    nil
+    super("Motorcycle", 2, 2)
   end
 end
 
 class Truck < Vehicle
   def initialize
-    # TODO: Call super with appropriate values
-    # Truck: 6 wheels, 3 passengers
-    nil
+    super("Truck",6,3)
   end
 end
 
@@ -53,7 +47,16 @@ class VehicleFactory
   # Return nil for unknown types
   
   def self.create_vehicle(type)
-    nil
+    case type
+    when :car
+      Car.new
+    when :motorcycle
+      Motorcycle.new
+    when :truck
+      Truck.new
+    else
+      nil 
+    end
   end
 end
 
@@ -70,7 +73,7 @@ class EmailNotification < Notification
   # TODO: Implement send method
   # Return "Email sent: #{message}"
   def send(message)
-    nil
+    "Email sent: #{message}"
   end
 end
 
@@ -78,7 +81,7 @@ class SMSNotification < Notification
   # TODO: Implement send method
   # Return "SMS sent: #{message}"
   def send(message)
-    nil
+    "SMS sent: #{message}"
   end
 end
 
@@ -86,7 +89,7 @@ class PushNotification < Notification
   # TODO: Implement send method
   # Return "Push notification sent: #{message}"
   def send(message)
-    nil
+    "Push notification sent: #{message}"
   end
 end
 
@@ -96,7 +99,16 @@ class NotificationFactory
   # Output: instance of appropriate notification class
   
   def self.create(type)
-    nil
+    case type
+    when :email
+      EmailNotification.new
+    when :sms
+      SMSNotification.new
+    when :push
+      PushNotification.new
+    else
+      nil
+    end
   end
 end
 
@@ -115,7 +127,7 @@ class LightButton
   # TODO: Implement render method
   # Return "Rendering light button"
   def render
-    nil
+    "Rendering light button"
   end
 end
 
@@ -125,7 +137,7 @@ class DarkButton
   # TODO: Implement render method
   # Return "Rendering dark button"
   def render
-    nil
+    "Rendering dark button"
   end
 end
 
@@ -135,7 +147,7 @@ class LightTextField
   # TODO: Implement render method
   # Return "Rendering light text field"
   def render
-    nil
+    "Rendering light text field"
   end
 end
 
@@ -145,7 +157,7 @@ class DarkTextField
   # TODO: Implement render method
   # Return "Rendering dark text field"
   def render
-    nil
+    "Rendering dark text field"
   end
 end
 
@@ -164,11 +176,11 @@ class LightThemeFactory < ThemeFactory
   # TODO: Implement create_text_field to return LightTextField
   
   def create_button
-    nil
+    LightButton.new
   end
   
   def create_text_field
-    nil
+    LightTextField.new
   end
 end
 
@@ -177,11 +189,11 @@ class DarkThemeFactory < ThemeFactory
   # TODO: Implement create_text_field to return DarkTextField
   
   def create_button
-    nil
+    DarkButton.new
   end
   
   def create_text_field
-    nil
+    DarkTextField.new
   end
 end
 
